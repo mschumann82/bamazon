@@ -4,6 +4,7 @@ var inquirer = require('inquirer');
 let productID;
 let prodQuantity;
 
+
 var connection = mysql.createConnection({
     host: "localhost",
   
@@ -54,8 +55,21 @@ var connection = mysql.createConnection({
       .then(function(inquirerResponse) {
         productID = inquirerResponse.id;
         prodQuantity = inquirerResponse.quantity;
-
-        bought(productID, prodQuantity);
+        connection.query("SELECT stock_quantity FROM products WHERE id = " + productID, function(err, res) {
+            if (err) throw err;
+            // Log all results of the SELECT statement
+            console.log(res);
+            if (res[0].stock_quantity > prodQuantity) {
+                bought(productID, prodQuantity);
+            }
+            else {
+                console.log("Insufficient inventory to complete order.\n")
+                prodDisplay();
+            }
+          });
+        //bought(productID, prodQuantity);
+        
+        
       
       });
   }
@@ -73,8 +87,17 @@ var connection = mysql.createConnection({
           ],
         function(err, res) {
             
-          console.log(res + " products updated!\n");
-         
+          console.log("Your order has been submitted");
+          purchase(productID, prodQuantity);
         }
       );
+  }
+
+  function purchase() {
+    connection.query("SELECT price FROM products WHERE id = " + productID, function(err, res) {
+        if (err) throw err;
+        // Log all results of the SELECT statement
+        console.log("Your total purchase price is $" + (res[0].price * prodQuantity));
+        
+      });
   }

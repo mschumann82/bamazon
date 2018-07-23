@@ -27,7 +27,7 @@ var connection = mysql.createConnection({
 
   function prodDisplay() {
     connection.query("SELECT id, product_name, price FROM products", function(err, res) {
-        for (var i = 0; i < res.length; i++) {
+        for (let i = 0; i < res.length; i++) {
           console.log(res[i].id + " " + res[i].product_name + " " + res[i].price);
         }
         console.log("-----------------------------------\n");

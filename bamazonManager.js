@@ -47,10 +47,10 @@ var connection = mysql.createConnection({
                 lowInv();
                 break;
             case "Add to Inventory":
-                //code block
+                addInv();
                 break;
             case "Add New Product":
-                //code block
+                createProduct();
                 break;
             
         }
@@ -66,7 +66,7 @@ var connection = mysql.createConnection({
   function prodDisplay() {
     connection.query("SELECT id, product_name, price, stock_quantity FROM products", function(err, res) {
         for (let i = 0; i < res.length; i++) {
-          console.log(res[i].id + " " + res[i].product_name + " " + res[i].price + " " + res[i].stock_quantity);
+          console.log("ID#" + res[i].id + " " + res[i].product_name + " " + res[i].price + " " + res[i].stock_quantity);
         }
         console.log("-----------------------------------\n");
         //console.log("Hit any key to continue.\n");
@@ -80,7 +80,7 @@ var connection = mysql.createConnection({
   function lowInv() {
     connection.query("SELECT id, product_name, stock_quantity FROM products WHERE stock_quantity <= 5", function(err, res) {
         for (let i = 0; i < res.length; i++) {
-          console.log(res[i].id + " " + res[i].product_name + " " + res[i].stock_quantity);
+          console.log("ID#" + res[i].id + " " + res[i].product_name + " " + res[i].stock_quantity);
         }
         console.log("-----------------------------------\n");
         //console.log("Hit any key to continue.\n");
@@ -89,4 +89,100 @@ var connection = mysql.createConnection({
        list();
       }, 2000); // lets the query finish before reproducing the list options
       
+  }
+
+  function createProduct() {
+    inquirer
+    .prompt([
+      // Here we ask for new product details.
+      {
+        type: "input",
+        message: "What is the name of the product you wish to add?\n",
+        name: "product"
+      },
+      {
+      type: "input",
+      message: "What department is the product in?\n",
+      name: "dept"
+    },
+    {
+        type: "input",
+        message: "What is the price of the product?\n",
+        name: "price"
+      },
+      {
+      type: "input",
+      message: "How many units of the product are being added to the inventory?\n",
+      name: "stock"
+    },
+     
+    ])
+      .then(function(inquirerResponse) {
+        productName = inquirerResponse.product;
+        prodDept = inquirerResponse.dept;
+        prodPrice = inquirerResponse.price;
+        prodStock = inquirerResponse.stock;
+        connection.query("INSERT INTO products SET ?",
+            {
+              product_name: productName,
+              department_name: prodDept,
+              price: prodPrice,
+              stock_quantity: prodStock 
+            },
+            function(err, res) {
+              console.log(res.affectedRows + " product added.\n");
+              // Call updateProduct AFTER the INSERT completes
+              
+            }
+          );   
+          two = setTimeout(function twoSeconds(){
+            list();
+           }, 2000);  
+        
+      
+      });
+    
+  
+    
+  }
+
+  function addInv() {
+    inquirer
+    .prompt([
+      // Here we ask for new product details.
+      {
+        type: "input",
+        message: "What is the id# of the product you are restocking?\n",
+        name: "id"
+      },
+      {
+      type: "input",
+      message: "What quantity being added to the product inventory?\n",
+      name: "stock"
+      },
+    ])
+    .then(function(inquirerResponse) {
+      productID = inquirerResponse.id;
+      prodQuantity = inquirerResponse.stock;
+      added(productID, prodQuantity);
+    });
+  }
+
+  function added(productID, prodQuantity) {
+    connection.query("UPDATE products SET stock_quantity = stock_quantity + ? WHERE id = ?",
+    [
+        
+          prodQuantity
+        ,
+        
+          productID
+        
+      ],
+    function(err, res) {
+        
+      console.log(res.affectedRows + " Your inventory has been updated");
+      two = setTimeout(function twoSeconds(){
+        list();
+       }, 2000); 
+    });
   }

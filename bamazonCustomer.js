@@ -28,10 +28,10 @@ var connection = mysql.createConnection({
   function prodDisplay() {
     connection.query("SELECT id, product_name, price FROM products", function(err, res) {
         for (let i = 0; i < res.length; i++) {
-          console.log(res[i].id + " " + res[i].product_name + " " + res[i].price);
+          console.log("ID#" + res[i].id + " " + res[i].product_name + " " + res[i].price);
         }
         console.log("-----------------------------------\n");
-        console.log("Hit any key to continue.\n");
+        console.log("Hit space to continue.\n");
       });
       whatchaWant();
   }
@@ -98,6 +98,6 @@ var connection = mysql.createConnection({
         if (err) throw err;
         // Log all results of the SELECT statement
         console.log("Your total purchase price is $" + (res[0].price * prodQuantity));
-        
+        prodDisplay();
       });
   }

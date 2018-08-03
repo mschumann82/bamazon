@@ -16,6 +16,7 @@ How to Run
 
 2: bamazonManager.js is the manager view. It shows all the products for sale. It allows the manager to view low inventory, items of 5 or less. The manager can add inventory to the stock of an item and the manager can add a new product entirely.
 
+Link to walkthrough: https://youtu.be/M0h7iF_k7e0
 
 Author - Michael Schumann
 
